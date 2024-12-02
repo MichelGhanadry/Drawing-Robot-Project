@@ -17,7 +17,7 @@ class Image():
         self.image_size = self.get_image_size()
         return
 
-  def show_image(self, blocking=True):
+    def show_image(self, blocking=True):
         imm.imshow(self.get_image_id(), self.image)
         if blocking:
             imm.waitKey(0)
