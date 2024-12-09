@@ -22,7 +22,11 @@ sample_size = 10
 points = edges.get_representative_points(sample_size, to_color=False)
 
 path = edges.find_path(points, sample_size)
-print([len(s) for s in path])
+print(f'before path minimize we had {len(path)} pathes of lengths: {[len(s) for s in path]}')
+edges.show_path(path, h=sample_size)
+
+edges.minimize_path(path, 2)
+print(f'after path minimize we have {len(path)} pathes of lengths: {[len(s) for s in path]}')
 edges.show_path(path, h=sample_size)
 
 edges.show_image()

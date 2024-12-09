@@ -112,7 +112,7 @@ class Image():
     def _find_neighbor(self, points, current_point, h):
         res = []
         i,j = current_point
-        
+
         neighbor = ((i+h),j)
         if neighbor in points:
             points.remove(neighbor)
@@ -170,6 +170,16 @@ class Image():
             res.extend(rec_res)
 
         return res
+
+    def minimize_path(self, path, x):
+        for section in path:
+            if len(section) > 3:
+                for i, point in enumerate(section):
+                    # print(i%x)
+                    # print(len(section))
+                    if i % x == 0 or i % x == 1:
+                        section.remove(point)
+        return
 
     def show_path(self, path, h):
         base = self.make_copy()
