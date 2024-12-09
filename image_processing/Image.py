@@ -181,6 +181,15 @@ class Image():
                         section.remove(point)
         return
 
+    def connect_path(self, path):
+        for section in path:
+            print('')
+            for i in range(len(section)-1):
+                x1, y1 = section[i]
+                x2, y2 = section[i + 1]
+                print(f'{x1},{y1} -> {x2},{y2}')
+                imm.line(self.image, (y1,x1), (y2,x2), colors['red'], 2)
+
     def show_path(self, path, h):
         base = self.make_copy()
         for section in path:
