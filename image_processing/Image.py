@@ -53,11 +53,13 @@ class Image():
             self.image[i][j] = color_value
         return
 
-    def set_pixel_range(self, i=0, j=0, color=[0,0,0], h=10):
+    def set_pixel_range(self, i=0, j=0, color='black', h=10):
         for x in range(h):
             for y in range(h):
                 self.set_pixel(x+i, y+j, color)
         return
+
+########################################### Edges ###########################################
     
     def make_copy(self, new_name=None):
         name = new_name if new_name is not None else self.image_name + "_copy"
@@ -76,3 +78,105 @@ class Image():
                     new_image.set_pixel(i, j, 'black') # edge
 
         return new_image
+
+    def _is_black(self, i, j):
+        color = self.get_pixel(i,j)
+        return color[0] == 0 and color[1] == 0 and color[2] == 0
+
+    def _is_edge(self, i=0, j=0, h=10):
+        is_edge = False
+        for x in range(h):
+            for y in range(h):
+                if self._is_black(x+i, y+j):
+                   is_edge = True
+                # self.set_pixel(x+i, y+j, [255,255,255])
+        return is_edge
+
+    def get_representative_points(self, sample_size=5, to_color=False):
+        res = []
+        for i in range(0, self.image_size[0]-sample_size, sample_size):
+            for j in range(0, self.image_size[1]-sample_size, sample_size):
+                if self._is_edge(i, j, h=sample_size):
+                    res.append((i,j))
+                    if to_color:
+                        self.set_pixel_range(i, j, h=sample_size)
+        return res
+
+    def find_path(self, points, h):
+        res = []
+        while len(points) > 0:
+            t = self._find_neighbor(points=points, current_point=points[0], h=h)
+            res.append(t)
+        return res
+        
+    def _find_neighbor(self, points, current_point, h):
+        res = []
+        i,j = current_point
+        
+        neighbor = ((i+h),j)
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = ((i-h),j)
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = (i,(j+h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = (i,(j-h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = ((i-h),(j-h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = ((i+h),(j-h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = ((i-h),(j+h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        neighbor = ((i+h),(j+h))
+        if neighbor in points:
+            points.remove(neighbor)
+            rec_res = self._find_neighbor(points=points, current_point=neighbor, h=h)
+            res.append(neighbor)
+            res.extend(rec_res)
+
+        return res
+
+    def show_path(self, path, h):
+        base = self.make_copy()
+        for section in path:
+            for point in section:
+                i, j = point
+                base.set_pixel_range(i, j, h=h)
+                
+        base.show_image()
+        return

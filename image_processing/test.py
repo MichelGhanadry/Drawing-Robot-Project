@@ -1,7 +1,7 @@
 from Image import Image
 from colors import colors
 
-image = Image('cow')
+image = Image('apple')
 
 # #################### Basics ####################
 # print(image.get_image_id())
@@ -14,7 +14,15 @@ image = Image('cow')
 # for i, color in enumerate(colors):
 #     image.set_pixel_range(i*12, 50, color, h=10)
 
-# image.show_image()
+# #################### Edges ####################
 
 edges = image.edges()
+
+sample_size = 10
+points = edges.get_representative_points(sample_size, to_color=False)
+
+path = edges.find_path(points, sample_size)
+print([len(s) for s in path])
+edges.show_path(path, h=sample_size)
+
 edges.show_image()
